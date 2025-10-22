@@ -1,0 +1,37 @@
+[
+  {
+    "id": "pii-email",
+    "name": "Email Detection",
+    "pattern": "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}",
+    "risk_level": "medium",
+    "action": "mask"
+  },
+  {
+    "id": "pii-ssn",
+    "name": "SSN Detection",
+    "pattern": "\\b\\d{3}-\\d{2}-\\d{4}\\b",
+    "risk_level": "high",
+    "action": "block"
+  },
+  {
+    "id": "malware-keywords",
+    "name": "Malware Keywords",
+    "pattern": "(ransomware|exfiltrate|backdoor|exploit|shellcode)",
+    "risk_level": "critical",
+    "action": "block"
+  },
+  {
+    "id": "secret-keys",
+    "name": "API Keys & Secrets",
+    "pattern": "(api[_-]?key|secret[_-]?key|password|token)\\s*[:=]",
+    "risk_level": "high",
+    "action": "block"
+  },
+  {
+    "id": "code-injection",
+    "name": "Code Injection Patterns",
+    "pattern": "(eval\\(|exec\\(|system\\(|__import__|subprocess)",
+    "risk_level": "critical",
+    "action": "block"
+  }
+]
