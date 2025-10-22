@@ -3,10 +3,12 @@
 import { useState } from "react"
 import { IncidentDashboard } from "@/components/incident-dashboard"
 import { RedTeamPlayground } from "@/components/red-team-playground"
+import { GovernanceDashboard } from "@/components/governance-dashboard"
+import { AgentRegistry } from "@/components/agent-registry"
 import { Shield } from "lucide-react"
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState<"dashboard" | "playground">("dashboard")
+  const [activeTab, setActiveTab] = useState<"dashboard" | "playground" | "governance" | "agents">("dashboard")
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
@@ -20,7 +22,7 @@ export default function Home() {
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-white">Sentinel.AI</h1>
-                <p className="text-sm text-slate-400">Real-time AI Security Gateway</p>
+                <p className="text-sm text-slate-400">Decentralized AI Security Gateway</p>
               </div>
             </div>
             <div className="text-right">
@@ -55,6 +57,26 @@ export default function Home() {
             >
               Red-Team Playground
             </button>
+            <button
+              onClick={() => setActiveTab("governance")}
+              className={`border-b-2 px-1 py-4 text-sm font-medium transition-colors ${
+                activeTab === "governance"
+                  ? "border-red-600 text-red-400"
+                  : "border-transparent text-slate-400 hover:text-slate-300"
+              }`}
+            >
+              Governance
+            </button>
+            <button
+              onClick={() => setActiveTab("agents")}
+              className={`border-b-2 px-1 py-4 text-sm font-medium transition-colors ${
+                activeTab === "agents"
+                  ? "border-red-600 text-red-400"
+                  : "border-transparent text-slate-400 hover:text-slate-300"
+              }`}
+            >
+              Agent Network
+            </button>
           </div>
         </div>
       </div>
@@ -63,6 +85,8 @@ export default function Home() {
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {activeTab === "dashboard" && <IncidentDashboard />}
         {activeTab === "playground" && <RedTeamPlayground />}
+        {activeTab === "governance" && <GovernanceDashboard />}
+        {activeTab === "agents" && <AgentRegistry />}
       </main>
     </div>
   )
