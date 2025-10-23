@@ -17,24 +17,43 @@ export function RedTeamPlayground() {
   const [result, setResult] = useState<ScanResult | null>(null)
   const [loading, setLoading] = useState(false)
 
+  const mockPolicies = [
+    { pattern: /\b\d{3}-\d{2}-\d{4}\b/, rule: "SSN Pattern", risk: "critical" },
+    { pattern: /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/, rule: "Email Detection", risk: "high" },
+    { pattern: /sk_live_[A-Za-z0-9]{20,}/, rule: "API Key Detection", risk: "critical" },
+    { pattern: /ransomware|malware|exploit|backdoor/i, rule: "Malware Keywords", risk: "high" },
+  ]
+
   const handleScan = async () => {
     if (!prompt.trim()) return
 
     setLoading(true)
-    try {
-      const response = await fetch("http://localhost:3001/api/gateway", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt, model: "gpt-4" }),
+
+    setTimeout(() => {
+      const triggeredRules: string[] = []
+      let maxRisk = "low"
+      const riskLevels = { low: 0, medium: 1, high: 2, critical: 3 }
+
+      mockPolicies.forEach((policy) => {
+        if (policy.pattern.test(prompt)) {
+          triggeredRules.push(policy.rule)
+          if (riskLevels[policy.risk as keyof typeof riskLevels] > riskLevels[maxRisk as keyof typeof riskLevels]) {
+            maxRisk = policy.risk
+          }
+        }
       })
 
-      const data = await response.json()
-      setResult(data)
-    } catch (error) {
-      setResult({ error: "Failed to connect to gateway" })
-    } finally {
+      const isBlocked = triggeredRules.length > 0
+
+      setResult({
+        success: !isBlocked,
+        risk_level: maxRisk,
+        triggered_rules: triggeredRules,
+        incident_id: `INC-${Date.now()}`,
+        response: isBlocked ? `Prompt blocked due to ${triggeredRules.join(", ")}` : "Prompt passed security checks",
+      })
       setLoading(false)
-    }
+    }, 500)
   }
 
   const testPrompts = [

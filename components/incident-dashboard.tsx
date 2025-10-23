@@ -14,26 +14,40 @@ interface Incident {
 
 export function IncidentDashboard() {
   const [incidents, setIncidents] = useState<Incident[]>([])
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [filter, setFilter] = useState<"all" | "blocked" | "masked" | "allowed">("all")
 
-  useEffect(() => {
-    fetchIncidents()
-    const interval = setInterval(fetchIncidents, 5000) // Refresh every 5 seconds
-    return () => clearInterval(interval)
-  }, [])
+  const mockIncidents: Incident[] = [
+    {
+      id: "1",
+      timestamp: new Date(Date.now() - 60000).toISOString(),
+      type: "prompt_scan",
+      risk_level: "critical",
+      triggered_rules: '["PII Detection", "SSN Pattern"]',
+      action: "block",
+    },
+    {
+      id: "2",
+      timestamp: new Date(Date.now() - 120000).toISOString(),
+      type: "response_scan",
+      risk_level: "high",
+      triggered_rules: '["Malware Keywords"]',
+      action: "mask",
+    },
+    {
+      id: "3",
+      timestamp: new Date(Date.now() - 180000).toISOString(),
+      type: "prompt_scan",
+      risk_level: "low",
+      triggered_rules: "[]",
+      action: "allow",
+    },
+  ]
 
-  const fetchIncidents = async () => {
-    try {
-      const response = await fetch("http://localhost:3001/api/incidents?limit=100")
-      const data = await response.json()
-      setIncidents(data)
-      setLoading(false)
-    } catch (error) {
-      console.error("Failed to fetch incidents:", error)
-      setLoading(false)
-    }
-  }
+  useEffect(() => {
+    setIncidents(mockIncidents)
+    setLoading(false)
+  }, [])
 
   const getRiskColor = (level: string) => {
     switch (level) {
